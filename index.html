@@ -3,169 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bloom OS - Kinetic Contraction</title>
+    <title>Ora OS - Unified Grid</title>
     <style>
         :root {
-            --aura-self: #BA9470; 
-            --aura-family: #6D875F; 
-            --aura-social: #C46252; 
-            --aura-productivity: #0F171F; 
-            --aura-world: #869094; 
-        }
-
-        @keyframes pulse-energy {
-            0% { box-shadow: 0 0 20px rgba(255,255,255,0.2); transform: scale(1); }
-            50% { box-shadow: 0 0 40px rgba(255,255,255,0.4); transform: scale(1.02); }
-            100% { box-shadow: 0 0 20px rgba(255,255,255,0.2); transform: scale(1); }
+            --aura-self: #BA9470;
+            --mote-glass: rgba(255, 255, 255, 0.15);
+            --mote-border: rgba(255, 255, 255, 0.1);
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; transition: background 1.2s cubic-bezier(0.19, 1, 0.22, 1);
-            display: flex; flex-direction: column; align-items: center;
+            overflow: hidden; background: var(--aura-self);
             font-family: -apple-system, sans-serif; touch-action: none;
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 100%), var(--aura-self);
         }
 
-        /* The Nucleus */
+        /* The Nucleus - Top Right Sentry */
         #nucleus {
-            position: absolute;
-            width: 50px; height: 50px;
-            background: radial-gradient(circle at 30% 30%, #fff 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 100%);
+            position: absolute; top: 65px; right: 30px;
+            width: 48px; height: 48px;
+            background: radial-gradient(circle at 35% 35%, #fff 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.3) 100%);
+            border-radius: 50%; z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), inset 0 2px 5px #fff;
+        }
+
+        /* The Grid System */
+        #page-container {
+            display: flex; width: 200vw; height: 100%;
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .page {
+            width: 100vw; height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            padding: 120px 25px 160px 25px; /* Avoiding Nucleus and Dock */
+            box-sizing: border-box; gap: 20px;
+        }
+
+        /* Glossy Viewport Mote */
+        .mote {
+            width: 100%; aspect-ratio: 1/1;
+            background: var(--mote-glass);
             border-radius: 50%;
-            z-index: 1000;
-            box-shadow: 0 0 30px rgba(255,255,255,0.5);
-            transition: all 0.9s cubic-bezier(0.19, 1, 0.22, 1);
-            animation: pulse-energy 4s infinite ease-in-out;
-        }
-
-        .nucleus-hero {
-            top: 50% !important; right: 50% !important;
-            transform: translate(50%, -50%) scale(3.8) !important;
-            box-shadow: 0 0 80px rgba(255,255,255,0.6) !important;
-        }
-
-        .nucleus-indicator { top: 60px; right: 30px; }
-
-        /* The Window - Now with Kinetic Contraction */
-        #window-container {
-            flex: 1; display: flex; justify-content: center; align-items: center;
-            width: 100%; 
-            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        .window-frame {
-            width: 85vw; height: 85vw; max-width: 420px; max-height: 420px;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
-            border-radius: 50%;
-            backdrop-filter: blur(20px);
+            border: 1px solid var(--mote-border);
+            backdrop-filter: blur(15px);
             display: flex; justify-content: center; align-items: center;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: transform 0.8s ease, opacity 0.6s ease;
+            /* Apple-style Refractive Depth */
+            box-shadow: 
+                0 10px 25px rgba(0,0,0,0.1),
+                inset 0 4px 10px rgba(255,255,255,0.3),
+                inset 0 -4px 10px rgba(0,0,0,0.05);
+            position: relative; overflow: hidden;
         }
 
-        /* Roots - Now Reactive */
+        .mote-core {
+            width: 40%; height: 40%;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%; filter: blur(2px);
+        }
+
+        /* The Roots (Static Dock) */
         #roots {
-            width: 85%; height: 160px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding-bottom: 50px;
-            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            position: absolute; bottom: 40px; left: 5%; width: 90%;
+            height: 100px; display: flex; justify-content: space-around;
+            align-items: center; z-index: 500;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px); border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
-        .root-mote {
-            width: 80px; height: 80px;
-            background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.01) 100%);
-            border-radius: 50%;
+
+        .root-orb {
+            width: 65px; height: 65px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
             display: flex; justify-content: center; align-items: center;
-            font-size: 26px; color: rgba(255,255,255,0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.8s ease, opacity 0.6s ease;
-        }
-
-        /* World State Contractions */
-        .contract-mote { transform: scale(0.2); opacity: 0; pointer-events: none; }
-        .contract-roots { transform: translateY(50px); opacity: 0.2; }
-
-        #aura-label {
-            position: absolute; top: 75px; left: 35px;
-            text-transform: uppercase; letter-spacing: 5px;
-            font-size: 14px; font-weight: 700;
-            color: rgba(255,255,255,0.25);
-            transition: opacity 0.5s ease;
+            font-size: 24px; color: rgba(255,255,255,0.5);
         }
     </style>
 </head>
 <body>
-    <div id="aura-label">Self</div>
-    <div id="nucleus" class="nucleus-indicator"></div>
+    <div id="nucleus"></div>
 
-    <div id="window-container">
-        <div id="main-window" class="window-frame">
-            <div id="active-icon" style="font-size: 70px; color: white; opacity: 0.5;">✦</div>
-        </div>
+    <div id="page-container">
+        <div class="page" id="page1">
+            </div>
+        <div class="page" id="page2"></div>
     </div>
 
     <div id="roots">
-        <div class="root-mote">☏</div>
-        <div class="root-mote">✉</div>
-        <div class="root-mote">◎</div>
+        <div class="root-orb">☏</div>
+        <div class="root-orb">✉</div>
+        <div class="root-orb">◎</div>
+        <div class="root-orb">◈</div>
     </div>
 
     <script>
-        const body = document.body;
-        const label = document.getElementById('aura-label');
-        const icon = document.getElementById('active-icon');
-        const nucleus = document.getElementById('nucleus');
-        const windowFrame = document.getElementById('main-window');
-        const roots = document.getElementById('roots');
-        const rootMotes = document.querySelectorAll('.root-mote');
+        const container = document.getElementById('page-container');
+        const p1 = document.getElementById('page1');
+        const p2 = document.getElementById('page2');
 
-        const config = {
-            self: { color: '#BA9470', icon: '✦', world: false },
-            family: { color: '#6D875F', icon: '❤', world: false },
-            social: { color: '#C46252', icon: '◎', world: false },
-            productivity: { color: '#0F171F', icon: '◈', world: false },
-            world: { color: '#869094', icon: '', world: true }
-        };
-
-        const auras = Object.keys(config);
-        let currentIdx = 0;
-        let startY;
-
-        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
-        document.addEventListener('touchend', e => {
-            const endY = e.changedTouches[0].clientY;
-            if (endY > startY + 60) shiftAura(-1); 
-            else if (endY < startY - 60) shiftAura(1); 
-        });
-
-        function shiftAura(dir) {
-            currentIdx = (currentIdx + dir + auras.length) % auras.length;
-            const state = config[auras[currentIdx]];
-            
-            body.style.background = `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 100%), ${state.color}`;
-            label.innerText = auras[currentIdx];
-            icon.innerText = state.icon;
-
-            if (state.world) {
-                // Biological Contraction
-                windowFrame.classList.add('contract-mote');
-                roots.classList.add('contract-roots');
-                rootMotes.forEach(m => m.style.transform = 'scale(0.8)');
-                
-                nucleus.classList.add('nucleus-hero');
-                nucleus.classList.remove('nucleus-indicator');
-            } else {
-                // Re-Expansion
-                windowFrame.classList.remove('contract-mote');
-                roots.classList.remove('contract-roots');
-                rootMotes.forEach(m => m.style.transform = 'scale(1)');
-                
-                nucleus.classList.remove('nucleus-hero');
-                nucleus.classList.add('nucleus-indicator');
-            }
+        // Generate 4x6 Grids
+        for(let i=0; i<24; i++) {
+            p1.innerHTML += `<div class="mote"><div class="mote-core"></div></div>`;
+            p2.innerHTML += `<div class="mote" style="opacity:0.5"><div class="mote-core"></div></div>`;
         }
+
+        let startX, currentX;
+        let page = 0;
+
+        document.addEventListener('touchstart', e => { startX = e.touches[0].clientX; });
+        document.addEventListener('touchmove', e => {
+            currentX = e.touches[0].clientX;
+            // Optional: Live drag effect can be added here
+        });
+        document.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            if (endX < startX - 80 && page === 0) {
+                container.style.transform = 'translateX(-100vw)';
+                page = 1;
+            } else if (endX > startX + 80 && page === 1) {
+                container.style.transform = 'translateX(0)';
+                page = 0;
+            }
+        });
     </script>
 </body>
 </html>
