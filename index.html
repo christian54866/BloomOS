@@ -3,78 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bloom OS - System Standard</title>
+    <title>Bloom OS - Living Viewport</title>
     <style>
         :root {
-            --aura-self: #E8D9C5;
-            --aura-family: #C2D1B2;
-            --aura-social: #FFB09C;
-            --aura-productivity: #323B47;
-            --aura-world: #DDE3E6;
+            /* Richer Mediterranean Tones */
+            --aura-self: #C5A17F; 
+            --aura-family: #7D966D; 
+            --aura-social: #D97A6A; 
+            --aura-productivity: #121A21; 
+            --aura-world: #99A3A4; 
         }
+
+        @keyframes breathe {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; transition: background-color 0.8s ease;
+            overflow: hidden; transition: background 1s ease;
             display: flex; flex-direction: column; align-items: center;
             font-family: -apple-system, sans-serif; touch-action: none;
-            background-color: var(--aura-self);
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.2) 100%), var(--aura-self);
         }
 
-        /* Top Right Indicator Nucleus */
+        /* The Portal Nucleus (Indicator) */
         #nucleus-indicator {
             position: absolute; top: 60px; right: 30px;
-            width: 40px; height: 40px;
+            width: 48px; height: 48px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            z-index: 100; transition: all 0.5s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2), inset 0 2px 8px rgba(255,255,255,1);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            animation: breathe 4s infinite ease-in-out;
         }
 
-        /* Large World Nucleus (Hidden by default) */
-        #nucleus-large {
-            width: 150px; height: 150px;
-            background: white; border-radius: 50%;
-            display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            z-index: 50;
-        }
-
-        /* Central Mote Area */
-        #mote-container {
+        /* The Main Viewport (The Window) */
+        #window-container {
             flex: 1; display: flex; justify-content: center; align-items: center;
-            width: 100%; position: relative;
+            width: 100%;
         }
 
-        .mote {
-            width: 100px; height: 100px;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 40px; /* Slightly squircle */
-            backdrop-filter: blur(15px);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+        .window-frame {
+            width: 85vw; height: 85vw;
+            max-width: 420px; max-height: 420px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            backdrop-filter: blur(25px);
+            display: flex; justify-content: center; align-items: center;
+            /* Inset Shadow creates the "Portal/Viewport" depth */
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.2),
+                inset 0 4px 20px rgba(0,0,0,0.1),
+                inset 0 -2px 15px rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
         }
 
-        /* The Roots (Bottom Bar) */
+        .window-content {
+            font-size: 70px; color: white; opacity: 0.6;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        /* Large Hardware Roots */
         #roots {
-            width: 100%; height: 100px;
-            display: flex; justify-content: space-around; align-items: center;
-            padding-bottom: 20px; z-index: 80;
+            width: 85%; height: 160px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 50px;
         }
         .root-mote {
-            width: 50px; height: 50px;
-            background: rgba(255, 255, 255, 0.2);
+            width: 85px; height: 85px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
-            backdrop-filter: blur(5px);
             display: flex; justify-content: center; align-items: center;
-            font-size: 18px; opacity: 0.6;
+            font-size: 28px; color: rgba(255,255,255,0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Labels */
         #aura-label {
-            position: absolute; top: 70px; left: 30px;
-            text-transform: uppercase; letter-spacing: 3px;
-            font-size: 12px; color: rgba(0,0,0,0.3);
+            position: absolute; top: 75px; left: 35px;
+            text-transform: uppercase; letter-spacing: 5px;
+            font-size: 14px; font-weight: 700;
+            color: rgba(255,255,255,0.3);
         }
     </style>
 </head>
@@ -82,10 +97,9 @@
     <div id="aura-label">Self</div>
     <div id="nucleus-indicator"></div>
 
-    <div id="mote-container">
-        <div id="nucleus-large"></div>
-        <div id="active-mote" class="mote">
-            <span id="mote-icon" style="font-size: 30px; opacity: 0.5;">✦</span>
+    <div id="window-container">
+        <div class="window-frame">
+            <div id="active-icon" class="window-content">✦</div>
         </div>
     </div>
 
@@ -98,17 +112,14 @@
     <script>
         const body = document.body;
         const label = document.getElementById('aura-label');
-        const indicator = document.getElementById('nucleus-indicator');
-        const largeNucleus = document.getElementById('nucleus-large');
-        const activeMote = document.getElementById('active-mote');
-        const moteIcon = document.getElementById('mote-icon');
+        const icon = document.getElementById('active-icon');
 
         const config = {
-            self: { color: 'var(--aura-self)', icon: '✦', large: false },
-            family: { color: 'var(--aura-family)', icon: '❤', large: false },
-            social: { color: 'var(--aura-social)', icon: '◎', large: false },
-            productivity: { color: 'var(--aura-productivity)', icon: '◈', large: false },
-            world: { color: 'var(--aura-world)', icon: '', large: true }
+            self: { color: '#C5A17F', icon: '✦' },
+            family: { color: '#7D966D', icon: '❤' },
+            social: { color: '#D97A6A', icon: '◎' },
+            productivity: { color: '#121A21', icon: '◈' },
+            world: { color: '#99A3A4', icon: '◇' }
         };
 
         const auras = Object.keys(config);
@@ -116,34 +127,27 @@
         let startY;
 
         document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; });
-
         document.addEventListener('touchend', e => {
             const endY = e.changedTouches[0].clientY;
-            if (endY > startY + 80) shiftAura(-1); // Swipe Down
-            else if (endY < startY - 80) shiftAura(1); // Swipe Up
+            if (endY > startY + 60) shiftAura(-1); 
+            else if (endY < startY - 60) shiftAura(1); 
         });
 
         function shiftAura(dir) {
-            currentIdx = (currentIdx + dir + auras.length) % auras.length;
-            const state = config[auras[currentIdx]];
+            icon.style.opacity = '0';
+            icon.style.transform = dir > 0 ? 'translateY(-30px)' : 'translateY(30px)';
 
-            body.style.backgroundColor = state.color;
-            label.innerText = auras[currentIdx];
-            moteIcon.innerText = state.icon;
+            setTimeout(() => {
+                currentIdx = (currentIdx + dir + auras.length) % auras.length;
+                const state = config[auras[currentIdx]];
+                
+                body.style.background = `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.2) 100%), ${state.color}`;
+                label.innerText = auras[currentIdx];
+                icon.innerText = state.icon;
 
-            if (state.large) {
-                activeMote.style.display = 'none';
-                largeNucleus.style.display = 'block';
-                indicator.style.opacity = '0';
-            } else {
-                activeMote.style.display = 'flex';
-                largeNucleus.style.display = 'none';
-                indicator.style.opacity = '1';
-            }
-
-            // Adjust text colors for dark mode (Productivity)
-            const isDark = auras[currentIdx] === 'productivity';
-            label.style.color = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)';
+                icon.style.opacity = '0.6';
+                icon.style.transform = 'translateY(0)';
+            }, 300);
         }
     </script>
 </body>
