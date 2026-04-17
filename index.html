@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Bloom OS - Phase 3</title>
+    <title>Bloom OS - Phase 4</title>
     <style>
         :root {
-            --aura-self: #f5f5f7;
-            --aura-family: #e8f5e9;
-            --aura-social: #fff0eb;
-            --aura-productivity: #e3f2fd;
-            --aura-world: #eceff1;
+            /* Your Mediterranean Palette */
+            --aura-self: #E8D9C5; /* Warm Sand */
+            --aura-family: #C2D1B2; /* Heirloom Green */
+            --aura-social: #FFB09C; /* Sunset Coral */
+            --aura-productivity: #323B47; /* Steel Slate */
+            --aura-world: #DDE3E6; /* Arctic Mist */
+            
+            --nucleus-glass: rgba(255, 255, 255, 0.9);
+            --mote-glass: rgba(255, 255, 255, 0.4);
         }
+
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            overflow: hidden; transition: background-color 0.8s ease;
+            overflow: hidden; transition: background-color 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; justify-content: center; align-items: center;
             font-family: -apple-system, sans-serif; touch-action: none;
             background-color: var(--aura-self);
@@ -23,49 +28,67 @@
         /* The Nucleus */
         #nucleus {
             width: 130px; height: 130px;
-            background: rgba(255, 255, 255, 0.9);
+            background: var(--nucleus-glass);
             border-radius: 50%;
             box-shadow: 0 10px 40px rgba(0,0,0,0.05), inset 0 -2px 10px rgba(255,255,255,1);
-            backdrop-filter: blur(15px);
-            z-index: 10; position: relative;
-            transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            backdrop-filter: blur(20px);
+            z-index: 100; position: relative;
+            transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* The Mote */
+        /* The Mote & The Bloom Canvas */
         #mote {
-            width: 60px; height: 60px;
-            background: rgba(255, 255, 255, 0.6);
+            width: 65px; height: 65px;
+            background: var(--mote-glass);
             border-radius: 50%;
             position: absolute;
-            top: 160px; /* Positioned below Nucleus */
+            top: 55%; /* Orbiting below center */
             display: flex; justify-content: center; align-items: center;
             box-shadow: 0 5px 20px rgba(0,0,0,0.03);
             backdrop-filter: blur(10px);
-            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-            z-index: 5;
-            opacity: 0; transform: translateY(20px);
+            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 50;
+            cursor: pointer;
         }
-        #mote.visible { opacity: 1; transform: translateY(0); }
-        #mote:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.9); }
 
-        .mote-icon { font-size: 20px; opacity: 0.4; }
+        /* Bloom State */
+        #mote.bloomed {
+            width: 100vw; height: 100vh;
+            top: 0; left: 0; border-radius: 0;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 150;
+        }
 
+        .mote-content {
+            opacity: 0; transition: opacity 0.3s ease;
+            text-align: center; font-weight: 300;
+        }
+        #mote.bloomed .mote-content { opacity: 1; }
+        #mote.bloomed .mote-icon { display: none; }
+
+        .mote-icon { font-size: 22px; opacity: 0.5; transition: transform 0.3s; }
+
+        /* UI Elements */
         #label-container {
             position: absolute; top: 80px; text-align: center;
-            width: 100%; pointer-events: none;
+            width: 100%; pointer-events: none; z-index: 10;
         }
         .label {
             font-weight: 400; letter-spacing: 4px;
-            color: rgba(0,0,0,0.2); text-transform: uppercase; font-size: 11px;
+            color: rgba(0,0,0,0.25); text-transform: uppercase; font-size: 11px;
             opacity: 0; transition: opacity 0.5s ease; position: absolute; width: 100%;
         }
         .active-label { opacity: 1; }
         
         #void {
             position: absolute; bottom: 50px;
-            width: 60px; height: 4px;
-            background: rgba(0,0,0,0.05); border-radius: 10px;
+            width: 70px; height: 5px;
+            background: rgba(0,0,0,0.1); border-radius: 10px;
+            z-index: 200; cursor: pointer;
         }
+
+        /* Specific Productivity handling for dark text */
+        .dark-mode-text { color: rgba(255,255,255,0.4) !important; }
     </style>
 </head>
 <body>
@@ -78,62 +101,79 @@
     </div>
     
     <div id="nucleus"></div>
-    <div id="mote" class="visible">
+
+    <div id="mote">
         <span id="mote-icon" class="mote-icon">✦</span>
+        <div class="mote-content">
+            <h2 id="bloom-title">Workspace</h2>
+            <p>Your Bloom is active.</p>
+        </div>
     </div>
+
     <div id="void"></div>
 
     <script>
         const nucleus = document.getElementById('nucleus');
         const mote = document.getElementById('mote');
         const moteIcon = document.getElementById('mote-icon');
+        const labels = document.querySelectorAll('.label');
         const body = document.body;
         
         const auras = ['self', 'family', 'social', 'productivity', 'world'];
         const colors = ['var(--aura-self)', 'var(--aura-family)', 'var(--aura-social)', 'var(--aura-productivity)', 'var(--aura-world)'];
-        const icons = ['✦', '❤', '◎', '◈', 'map'];
+        const icons = ['✦', '❤', '◎', '◈', '◇'];
         
         let currentIdx = 0;
         let startX;
+        let isBloomed = false;
 
-        // Visual Reactivity for Nucleus
-        nucleus.addEventListener('touchstart', (e) => {
+        // Aura Shifting
+        document.addEventListener('touchstart', (e) => {
+            if (isBloomed) return;
             startX = e.touches[0].clientX;
-            nucleus.style.transform = 'scale(1.1)';
         });
 
         document.addEventListener('touchend', (e) => {
-            nucleus.style.transform = 'scale(1)';
+            if (isBloomed) return;
             const endX = e.changedTouches[0].clientX;
-
-            if (endX > startX + 60) shiftAura(1);
-            else if (endX < startX - 60) shiftAura(-1);
+            if (endX > startX + 70) shiftAura(1);
+            else if (endX < startX - 70) shiftAura(-1);
         });
 
         function shiftAura(direction) {
-            // Animation for Mote disappearance
-            mote.classList.remove('visible');
+            labels[currentIdx].classList.remove('active-label');
+            currentIdx = (currentIdx + direction + auras.length) % auras.length;
             
-            setTimeout(() => {
-                document.getElementById(`label-${auras[currentIdx]}`).classList.remove('active-label');
-                currentIdx = (currentIdx + direction + auras.length) % auras.length;
-                
-                body.style.backgroundColor = colors[currentIdx];
-                document.getElementById(`label-${auras[currentIdx]}`).classList.add('active-label');
-                
-                // Change Mote Icon based on Aura
-                moteIcon.innerText = icons[currentIdx];
-                
-                // Show Mote again
-                mote.classList.add('visible');
-            }, 300);
+            body.style.backgroundColor = colors[currentIdx];
+            labels[currentIdx].classList.add('active-label');
+            moteIcon.innerText = icons[currentIdx];
+
+            // Adjust label color for Productivity (Dark Aura)
+            if (auras[currentIdx] === 'productivity') {
+                labels.forEach(l => l.style.color = 'rgba(255,255,255,0.3)');
+            } else {
+                labels.forEach(l => l.style.color = 'rgba(0,0,0,0.25)');
+            }
         }
 
-        // Mote Interaction
+        // Bloom Logic
         mote.addEventListener('click', () => {
-            // For now, just a haptic-style reaction
-            mote.style.transform = 'scale(1.5)';
-            setTimeout(() => { mote.style.transform = 'scale(1)'; }, 200);
+            if (!isBloomed) {
+                mote.classList.add('bloomed');
+                nucleus.style.transform = 'scale(0.8) translateY(-100px)';
+                nucleus.style.opacity = '0.3';
+                isBloomed = true;
+            }
+        });
+
+        // The Void Dismissal
+        document.getElementById('void').addEventListener('click', () => {
+            if (isBloomed) {
+                mote.classList.remove('bloomed');
+                nucleus.style.transform = 'scale(1) translateY(0)';
+                nucleus.style.opacity = '1';
+                isBloomed = false;
+            }
         });
     </script>
 </body>
